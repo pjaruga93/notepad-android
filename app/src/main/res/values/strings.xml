@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">notepad</string>
+    <string name="register">Register</string>
+    <string name="appname">Notepad</string>
+    <string name="name">name</string>
+    <string name="email">email</string>
+    <string name="username">username</string>
+    <string name="password">password</string>
+    <string name="haveaccount">Already have an account? <u>Login</u></string>
+    <string name="noaccount">No account? <u>Register</u></string>
+    <string name="createaccount">Create account</string>
+    <string name="editContent">Enter your note here...</string>
+    <string name="title">Add title</string>
+    <string name="notePassword">password for this note</string>
+</resources>

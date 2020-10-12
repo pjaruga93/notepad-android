@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,7 +17,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.vishnusivadas.advanced_httpurlconnection.PutData;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -26,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     static ArrayAdapter arrayAdapter;
 
     int userId;
+    String authorId;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -60,26 +66,53 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        userId = getIntent().getExtras().getInt("userId");
+        authorId = String.valueOf(getIntent().getExtras().getInt("userId"));
 
         ListView listView = (ListView) findViewById(R.id.listView);
 
-        // phpowy skrypt
-        // metoda do pobierania danych
+        if(!authorId.equals("")) {
+            Handler handler = new Handler();
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    String[] field = new String[1];
+                    field[0] = "author";
+                    String[] data = new String[1];
+                    data[0] = authorId;
+                    PutData putData = new PutData("http://192.168.1.64/LoginRegister/getNotes.php", "POST", field, data);
+                    if (putData.startPut()) {
+                        if (putData.onComplete()) {
+                            String[][] allNotes = {{putData.getResult()}};
+                            if(allNotes.length != 0){ // sprawdzic ten warunek bo napieprza milion razy w apce
+                                Toast.makeText(getApplicationContext(), "Notes downloaded", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                Bundle x = new Bundle();
+                                x.putInt("userId", userId);
+                                intent.putExtras(x);
+                                startActivity(intent);
+                                finish();
+                            }
+                            else {
+                                Toast.makeText(getApplicationContext(), "No notes", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notepad", Context.MODE_PRIVATE);
 
-        HashSet<String> set = (HashSet<String>) sharedPreferences.getStringSet("notes", null);
+        HashSet<String> set = (HashSet<String>) sharedPreferences.getStringSet("allNotes", null);
 
         if (set == null) {
-             // tu wrzucic liste notatek
-            // recycler view zeby dodac liste z IDkami
-
-
-            notes.add("Example note");
+            // tutaj wyswietlic notatke?
+            allNotes.add("Example note");
 
         } else {
-
-            notes = new ArrayList<>(set);
+// tutaj wyswietlic notatke?
+            allNotes = new ArrayList<>(set);
 
         }
 

@@ -8,18 +8,25 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        android:id="@+id/yourNotes"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:padding="10dp"
+        android:text="Your notes"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="@id/listView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.114"
+        tools:layout_editor_absoluteX="1dp" />
 
     <ListView
         android:id="@+id/listView"
         android:layout_width="412dp"
         android:layout_height="554dp"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="96dp" />
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="113dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/yourNotes"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

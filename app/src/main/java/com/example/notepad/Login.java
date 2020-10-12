@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,7 +26,7 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         textInputEditTextUsername = findViewById(R.id.username);
-        textInputEditTextPassword = findViewById(R.id.password);
+        textInputEditTextPassword = findViewById(R.id.verifyNotePassword);
         btnLogin = findViewById(R.id.btnLogin);
         textViewRegister = findViewById(R.id.registerText);
 
@@ -66,7 +65,9 @@ public class Login extends AppCompatActivity {
                                     if(!result.equals("0")){
                                         Toast.makeText(getApplicationContext(), "Login success", Toast.LENGTH_SHORT).show();
                                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                        intent.putExtra("userId", userId);
+                                        Bundle x = new Bundle();
+                                        x.putInt("userId", userId);
+                                        intent.putExtras(x);
                                         startActivity(intent);
                                         finish();
                                     }

@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -30,7 +29,7 @@ public class SignUp extends AppCompatActivity {
         textInputEditTextName = findViewById(R.id.name);
         textInputEditTextEmail = findViewById(R.id.email);
         textInputEditTextUsername = findViewById(R.id.username);
-        textInputEditTextPassword = findViewById(R.id.password);
+        textInputEditTextPassword = findViewById(R.id.verifyNotePassword);
         btnRegister = findViewById(R.id.btnRegister);
         textViewLogin = findViewById(R.id.loginText);
         progressBar = findViewById(R.id.progress);

@@ -5,11 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -17,64 +14,58 @@ import com.vishnusivadas.advanced_httpurlconnection.PutData;
 
 public class AddNoteActivity extends AppCompatActivity {
 
-    TextInputEditText textInputEditTextName, textInputEditTextEmail, textInputEditTextUsername, textInputEditTextPassword;
+    TextInputEditText textInputEditTextTitle, textInputEditTextContent, textInputEditTextNotePassword;
     Button btnSaveNote;
+    int userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_up);
+        setContentView(R.layout.activity_add_note);
 
-        textInputEditTextName = findViewById(R.id.name);
-        textInputEditTextEmail = findViewById(R.id.email);
-        textInputEditTextUsername = findViewById(R.id.username);
-        textInputEditTextPassword = findViewById(R.id.password);
-        btnRegister = findViewById(R.id.btnRegister);
-        textViewLogin = findViewById(R.id.loginText);
-        progressBar = findViewById(R.id.progress);
+        textInputEditTextTitle = findViewById(R.id.editTitle);
+        textInputEditTextContent = findViewById(R.id.editContent);
+        textInputEditTextNotePassword = findViewById(R.id.notePassword);
+        btnSaveNote = findViewById(R.id.btnSaveNote);
 
-        textViewLogin.setOnClickListener(new View.OnClickListener() {
+        userId = getIntent().getExtras().getInt("userId");
+
+        // 1. zrobic czesc do wysylania danych (id), na podst ktorej beda pobierane notatki (w odp. lista notatek danego usera, wrzucic ja do seta)
+
+        btnSaveNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), Login.class);
-                startActivity(intent);
-                finish();
-            }
-        });
+                final String title, author, content, notePassword;
+                title = String.valueOf(textInputEditTextTitle.getText());
+                author = String.valueOf(userId);
+                content = String.valueOf(textInputEditTextContent.getText());
+                notePassword = String.valueOf(textInputEditTextNotePassword.getText());
 
-        btnRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final String name, email, username, password ;
-                name = String.valueOf(textInputEditTextName.getText());
-                email = String.valueOf(textInputEditTextEmail.getText());
-                username = String.valueOf(textInputEditTextUsername.getText());
-                password = String.valueOf(textInputEditTextPassword.getText());
 
-                if(!name.equals("") && !email.equals("") && !username.equals("") && !password.equals("")) {
-                    progressBar.setVisibility(View.VISIBLE);
+                if(!title.equals("") && !content.equals("") && !notePassword.equals("")) {
                     Handler handler = new Handler();
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
                             String[] field = new String[4];
-                            field[0] = "name";
-                            field[1] = "email";
-                            field[2] = "username";
-                            field[3] = "password";
+                            field[0] = "title";
+                            field[1] = "author";
+                            field[2] = "content";
+                            field[3] = "notePassword";
                             String[] data = new String[4];
-                            data[0] = name;
-                            data[1] = email;
-                            data[2] = username;
-                            data[3] = password;
-                            PutData putData = new PutData("http://192.168.1.64/LoginRegister/signup.php", "POST", field, data);
+                            data[0] = title;
+                            data[1] = author;
+                            data[2] = content;
+                            data[3] = notePassword;
+                            PutData putData = new PutData("http://192.168.1.64/LoginRegister/addNote.php", "POST", field, data);
                             if (putData.startPut()) {
                                 if (putData.onComplete()) {
-                                    progressBar.setVisibility(View.GONE);
                                     String result = putData.getResult();
-                                    if(result.equals("Sign Up Success")){
+                                    if(result.equals("Note has been added")){
                                         Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(getApplicationContext(), Login.class);
+                                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                        Bundle x = new Bundle();
+                                        x.putInt("userId", userId);
                                         startActivity(intent);
                                         finish();
                                     }
@@ -87,7 +78,7 @@ public class AddNoteActivity extends AppCompatActivity {
                     });
                 }
                 else {
-                    Toast.makeText(getApplicationContext(), "All fields are required", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT).show();
                 }
             }
         });

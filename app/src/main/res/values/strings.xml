@@ -12,4 +12,5 @@
     <string name="editContent">Enter your note here...</string>
     <string name="title">Add title</string>
     <string name="notePassword">password for this note</string>
+    <string name="verifyNotePassword">Enter note password</string>
 </resources>

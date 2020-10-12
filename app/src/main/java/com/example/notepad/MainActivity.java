@@ -42,7 +42,10 @@ public class MainActivity extends AppCompatActivity {
 
         if (item.getItemId() == R.id.add_note) {
 
-            Intent intent = new Intent(getApplicationContext(), NoteEditorActivity.class);
+            Intent intent = new Intent(getApplicationContext(), AddNoteActivity.class);
+            Bundle x = new Bundle();
+            x.putInt("userId", userId);
+            intent.putExtras(x);
             startActivity(intent);
 
             return true;
@@ -57,16 +60,20 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent intent = getIntent();
-        userId = intent.getIntExtra("userId", 0);
+        userId = getIntent().getExtras().getInt("userId");
 
         ListView listView = (ListView) findViewById(R.id.listView);
 
+        // phpowy skrypt
+        // metoda do pobierania danych
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notepad", Context.MODE_PRIVATE);
 
         HashSet<String> set = (HashSet<String>) sharedPreferences.getStringSet("notes", null);
 
         if (set == null) {
+             // tu wrzucic liste notatek
+            // recycler view zeby dodac liste z IDkami
+
 
             notes.add("Example note");
 
@@ -76,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, notes);
+        arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, notes); // cos w ten desen
 
         listView.setAdapter(arrayAdapter);
 
@@ -84,8 +91,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                Intent intent = new Intent(getApplicationContext(), NoteEditorActivity.class);
+                Intent intent = new Intent(getApplicationContext(), VerifyNotePassword.class);
                 intent.putExtra("noteId", i);
+                Bundle x = new Bundle();
+                x.putInt("userId", userId);
+                x.putInt("noteId", i);
+                intent.putExtras(x);
                 startActivity(intent);
 
             }
@@ -97,10 +108,14 @@ public class MainActivity extends AppCompatActivity {
 
                 final int itemToDelete = i;
 
+                Intent intent = new Intent(getApplicationContext(), VerifyNotePassword.class);
+                intent.putExtra("noteId", i);
+                startActivity(intent);
+
                 new AlertDialog.Builder(MainActivity.this)
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle("Are you sure?")
-                        .setMessage("Do you want to delete this note?")
+                        .setMessage("This note will be deleted permamently.")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -57,13 +58,16 @@ public class AddNoteActivity extends AppCompatActivity {
                             data[1] = author;
                             data[2] = content;
                             data[3] = notePassword;
-                            PutData putData = new PutData("http://192.168.1.64/LoginRegister/addNote.php", "POST", field, data);
+                            Log.d("DEBUG - User ID", author);
+                            PutData putData = new PutData("http://192.168.1.10/LoginRegister/addNote.php", "POST", field, data);
                             if (putData.startPut()) {
                                 if (putData.onComplete()) {
                                     String result = putData.getResult();
+                                    Log.d("DEBUG - addNote.result",result);
                                     if(result.equals("Note has been added")){
                                         Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
                                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                        intent.putExtra("userId",userId);
                                         Bundle x = new Bundle();
                                         x.putInt("userId", userId);
                                         startActivity(intent);

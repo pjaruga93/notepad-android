@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,17 +22,25 @@ import android.widget.Toast;
 
 import com.vishnusivadas.advanced_httpurlconnection.PutData;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 
 public class MainActivity extends AppCompatActivity {
 
     static ArrayList<String> notes = new ArrayList<>();
+
     static ArrayAdapter arrayAdapter;
 
     int userId;
     String authorId;
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -48,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (item.getItemId() == R.id.add_note) {
 
+            userId = getIntent().getExtras().getInt("userId");
             Intent intent = new Intent(getApplicationContext(), AddNoteActivity.class);
             Bundle x = new Bundle();
             x.putInt("userId", userId);
@@ -66,7 +76,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        authorId = String.valueOf(getIntent().getExtras().getInt("userId"));
+        Bundle b = getIntent().getExtras();
+
+        userId = b.getInt("userId");
+        authorId = String.valueOf(userId);
 
         ListView listView = (ListView) findViewById(R.id.listView);
 
@@ -76,25 +89,34 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     String[] field = new String[1];
-                    field[0] = "author";
+                    field[0] = "authorId";
                     String[] data = new String[1];
                     data[0] = authorId;
-                    PutData putData = new PutData("http://192.168.1.64/LoginRegister/getNotes.php", "POST", field, data);
+                    PutData putData = new PutData("http://192.168.1.10/LoginRegister/getNotes.php", "POST", field, data);
                     if (putData.startPut()) {
                         if (putData.onComplete()) {
-                            String[][] allNotes = {{putData.getResult()}};
-                            if(allNotes.length != 0){ // sprawdzic ten warunek bo napieprza milion razy w apce
-                                Toast.makeText(getApplicationContext(), "Notes downloaded", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                Bundle x = new Bundle();
-                                x.putInt("userId", userId);
-                                intent.putExtras(x);
-                                startActivity(intent);
-                                finish();
+                            Log.d("DEBUG - Pobrane notatki",putData.getResult().toString());
+                            String in = putData.getResult();
+                            try {
+//                                JSONObject notesList = new JSONObject(in);
+                                JSONArray notesList = new JSONArray(in);
+                                for(int i=0; i < notesList.length(); i++) {
+                                    JSONObject jsonobject = notesList.getJSONObject(i);
+                                    String title    = jsonobject.getString("title");
+                                    String content  = jsonobject.getString("content");
+
+                                    notes.add(title);
+//                                    notes.add(content);
+
+                                }
+                                Log.d("DEBUG - ok: ", "poszedl for");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                Log.d("DEBUG - err: ", e.toString());
                             }
-                            else {
-                                Toast.makeText(getApplicationContext(), "No notes", Toast.LENGTH_SHORT).show();
-                            }
+
+
+
                         }
                     }
                 }
@@ -106,15 +128,14 @@ public class MainActivity extends AppCompatActivity {
 
         HashSet<String> set = (HashSet<String>) sharedPreferences.getStringSet("allNotes", null);
 
-        if (set == null) {
-            // tutaj wyswietlic notatke?
-            allNotes.add("Example note");
 
-        } else {
-// tutaj wyswietlic notatke?
-            allNotes = new ArrayList<>(set);
-
-        }
+//        if (set == null) {
+//            // tutaj wyswietlic notatke?
+//            allNotes.add("Example note");
+//        } else {
+//            // tutaj wyswietlic notatke?
+//            allNotes = new ArrayList<>(set);
+//        }
 
         arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, notes); // cos w ten desen
 
